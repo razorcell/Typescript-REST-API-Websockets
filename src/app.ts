@@ -11,6 +11,7 @@ import morgan from 'morgan';
 import { connect, set } from 'mongoose';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import { WebSocketServer, WebSocket } from 'ws';
 import { dbConnection } from '@databases';
 import { Routes } from '@interfaces/routes.interface';
 import errorMiddleware from '@middlewares/error.middleware';
@@ -19,11 +20,14 @@ import { logger, stream } from '@utils/logger';
 class App {
   public app: express.Application;
   public port: string | number;
+  public webSocketPort: string | number;
   public env: string;
+  private webSocketServer: WebSocketServer;
 
   constructor(routes: Routes[]) {
     this.app = express();
     this.port = process.env.PORT || 3000;
+    this.webSocketPort = process.env.WBSOCK_PORT || 3003;
     this.env = process.env.NODE_ENV || 'development';
 
     this.connectToDatabase();
@@ -89,6 +93,24 @@ class App {
 
   private initializeErrorHandling() {
     this.app.use(errorMiddleware);
+  }
+
+  public initilizeWebSocketServer() {
+    this.webSocketServer = new WebSocketServer({ port: this.webSocketPort });
+
+    this.webSocketServer.on('connection', function connection(ws: WebSocket, req) {
+      const ip = req.socket.remoteAddress;
+      logger.info(`Client connected IP ${ip}`);
+      ws.on('message', function incoming(message) {
+        logger.info('received: %s', message);
+      });
+
+      ws.send('something');
+    });
+
+    logger.info(`=================================`);
+    logger.info(`🚀 WebSocketServer Initialised ${this.webSocketPort}`);
+    logger.info(`=================================`);
   }
 }
 
