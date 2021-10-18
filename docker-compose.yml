@@ -18,7 +18,7 @@ services:
       dockerfile: Dockerfile
     container_name: server
     ports:
-      - '3000:3000'
+      - "${PORT}:${PORT}"
     environment:
       MONGO_HOST: mongo
       MONGO_PORT: 27017
