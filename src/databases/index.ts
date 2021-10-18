@@ -9,5 +9,6 @@ export const dbConnection = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+    useCreateIndex: true,
   },
 };
