@@ -10,7 +10,7 @@ const eventSchema: Schema = new Schema({
     type: Date,
     default: Date.now,
   },
-  description: {
+  label: {
     type: String,
     required: true,
   },
