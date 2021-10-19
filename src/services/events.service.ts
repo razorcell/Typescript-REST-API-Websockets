@@ -1,4 +1,4 @@
-import { CreateEventDto } from '@dtos/events.dto';
+import { CreateEventDto, UpdateEventDto } from '@dtos/events.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { Event } from '@interfaces/events.interface';
 import eventModel from '@models/events.model';
@@ -16,45 +16,45 @@ class EventService {
     if (isEmpty(eventId)) throw new HttpException(400, "You're not eventId");
 
     const findEvent: Event = await this.events.findOne({ _id: eventId });
-    if (!findEvent) throw new HttpException(409, "You're not user");
+    if (!findEvent) throw new HttpException(409, "You're not event");
 
     return findEvent;
   }
 
-  public async createEvent(userData: CreateEventDto): Promise<Event> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+  public async findDueEvents(): Promise<Event[]> {
+    const dueEvents: Event[] = await this.events.find({ processed: false, datetime: { $lt: new Date() } });
 
-    const findEvent: Event = await this.events.findOne({ label: userData.label });
-    if (findEvent) throw new HttpException(409, `Your label ${userData.label} already exists`);
+    return dueEvents;
+  }
 
-    // const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const createEventData: Event = await this.events.create({ ...userData });
+  public async createEvent(eventData: CreateEventDto): Promise<Event> {
+    if (isEmpty(eventData)) throw new HttpException(400, "You're not eventData");
+
+    const findEvent: Event = await this.events.findOne({ label: eventData.label });
+    if (findEvent) throw new HttpException(409, `Your label ${eventData.label} already exists`);
+
+    const createEventData: Event = await this.events.create({ ...eventData });
 
     return createEventData;
   }
 
-  // public async updateEvent(eventId: string, userData: CreateEventDto): Promise<Event> {
-  //   if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
+  public async updateEvent(eventId: string, eventData: UpdateEventDto): Promise<Event> {
+    if (isEmpty(eventData)) throw new HttpException(400, "You're not eventData");
 
-  //   if (userData.email) {
-  //     const findEvent: Event = await this.events.findOne({ email: userData.email });
-  //     if (findEvent && findEvent._id != eventId) throw new HttpException(409, `You're email ${userData.email} already exists`);
-  //   }
+    if (eventData.label) {
+      const findEvent: Event = await this.events.findOne({ label: eventData.label });
+      if (findEvent && findEvent._id != eventId) throw new HttpException(409, `You're label ${eventData.label} already exists`);
+    }
 
-  //   if (userData.password) {
-  //     const hashedPassword = await bcrypt.hash(userData.password, 10);
-  //     userData = { ...userData, password: hashedPassword };
-  //   }
+    const updateEventById: Event = await this.events.findByIdAndUpdate(eventId, { ...eventData }, { new: true });
+    if (!updateEventById) throw new HttpException(409, "You're not event");
 
-  //   const updateEventById: Event = await this.events.findByIdAndUpdate(eventId, { userData });
-  //   if (!updateEventById) throw new HttpException(409, "You're not user");
-
-  //   return updateEventById;
-  // }
+    return updateEventById;
+  }
 
   public async deleteEvent(eventId: string): Promise<Event> {
     const deleteEventById: Event = await this.events.findByIdAndDelete(eventId);
-    if (!deleteEventById) throw new HttpException(409, "You're not user");
+    if (!deleteEventById) throw new HttpException(409, "You're not event");
 
     return deleteEventById;
   }

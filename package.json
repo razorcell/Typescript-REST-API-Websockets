@@ -1,7 +1,7 @@
 {
-  "name": "websockMongo",
+  "name": "events-notifications",
   "version": "0.0.0",
-  "description": "TypeScript + Mongoose + MongoDB + Express API Server",
+  "description": "TypeScript + Mongoose + MongoDB + Express API Server + Websockets Events notifications",
   "author": "",
   "license": "ISC",
   "scripts": {
@@ -15,6 +15,7 @@
     "deploy:dev": "pm2 start ecosystem.config.js --only dev"
   },
   "dependencies": {
+    "agenda": "^4.2.1",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
@@ -43,6 +44,7 @@
     "ws": "^8.2.3"
   },
   "devDependencies": {
+    "@types/agenda": "^4.1.0",
     "@types/bcrypt": "^5.0.0",
     "@types/compression": "^1.7.1",
     "@types/config": "^0.0.39",

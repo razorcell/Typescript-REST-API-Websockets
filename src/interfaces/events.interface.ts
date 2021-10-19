@@ -1,6 +1,6 @@
 export interface Event {
   _id: string;
   processed: boolean;
-  datetime: Date;
+  datetime: string | Date;
   label: string;
 }
