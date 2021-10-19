@@ -14,13 +14,13 @@ export default class Scheduler {
     this.wsServer = wsServer;
   }
 
-  public async start() {
+  public async init() {
     await this.agenda.start();
     logger.info('Scheduler Started');
     await this.initAllTasks();
   }
 
-  public async stop() {
+  public async close() {
     await this.agenda.stop();
     logger.info('Scheduler Stopped');
   }

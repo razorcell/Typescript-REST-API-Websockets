@@ -24,4 +24,4 @@ wsServer.listen();
 
 const scheduler = new Scheduler(wsServer);
 
-scheduler.start();
+scheduler.init();
